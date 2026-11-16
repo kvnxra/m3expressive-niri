@@ -1,0 +1,7 @@
+# Необязательное. Раскомментируй нужное — установщик поставит.
+telegram-desktop
+# qbittorrent
+# obs-studio
+# gimp
+# kdenlive
+# easyeffects

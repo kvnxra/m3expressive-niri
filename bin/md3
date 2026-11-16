@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# md3 — динамические цвета Material 3 для waybar / mako / fuzzel / ghostty / GTK / Qt / swaylock / btop / zathura / Zen / niri
+#
+#   md3 color "#6750A4"      сменить seed-цвет (обои перерисуются в новой палитре)
+#   md3 image ~/wall.png     цвета из картинки (+ ставит её обоями)
+#   md3 mode dark|light|amoled
+#   md3 scheme tonal-spot|content|expressive|fidelity|fruit-salad|monochrome|neutral|rainbow
+#   md3 apply                применить текущие настройки заново
+#   md3 restore              вернуть обои после входа (вызывается из niri)
+#   md3 status
+# Меню выбора: md3-menu.   MD3_WALLPAPER=none — не генерировать обои.
+set -euo pipefail
+
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/md3"
+CONF="$CFG/matugen.toml"
+STATE="$CFG/state"
+HERE="$(dirname "$(readlink -f "$0")")"
+GEN_WALL="$HOME/.cache/md3/wallpaper.png"
+
+MODE=dark
+SCHEME=scheme-tonal-spot
+KIND=color
+SOURCE="#6750A4"
+# shellcheck disable=SC1090
+[[ -f $STATE ]] && source "$STATE"
+
+die() { echo "md3: $*" >&2; exit 1; }
+save() { printf 'MODE=%q\nSCHEME=%q\nKIND=%q\nSOURCE=%q\n' "$MODE" "$SCHEME" "$KIND" "$SOURCE" > "$STATE"; }
+
+set_wallpaper() {
+    command -v awww >/dev/null || return 0
+    pgrep -x awww-daemon >/dev/null || { setsid -f awww-daemon >/dev/null 2>&1; sleep 0.5; }
+    awww img "$1" --transition-type none --resize crop >/dev/null 2>&1 || true
+}
+
+gen_wall() {
+    [[ ${MD3_WALLPAPER:-auto} == none ]] && return 0
+    python3 "$HERE/md3-wall.py" "$GEN_WALL" && set_wallpaper "$GEN_WALL"
+}
+
+generate() {
+    command -v matugen >/dev/null || die "matugen не найден"
+    if [[ $KIND == image ]]; then
+        local extra=()
+        matugen image --help 2>&1 | grep -q -- '--source-color-index' && extra=(--source-color-index 0)
+        matugen image "$SOURCE" --mode "$MODE" --type "$SCHEME" --config "$CONF" "${extra[@]}" --quiet
+    else
+        matugen color hex "$SOURCE" --mode "$MODE" --type "$SCHEME" --config "$CONF" --quiet
+    fi
+}
+
+reload() {
+    local theme=adw-gtk3-dark scheme=prefer-dark dark=1
+    if [[ $MODE == light ]]; then
+        scheme=prefer-light; dark=0
+        [[ -d /usr/share/themes/adw-gtk3 ]] && theme=adw-gtk3
+    fi
+    gsettings set org.gnome.desktop.interface color-scheme "$scheme" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface gtk-theme "$theme" 2>/dev/null || true
+    for v in 3 4; do
+        local f="$HOME/.config/gtk-$v.0/settings.ini"
+        [[ -f $f ]] && sed -i "s/^gtk-theme-name=.*/gtk-theme-name=$theme/" "$f"
+    done
+    local f3="$HOME/.config/gtk-3.0/settings.ini"
+    [[ -f $f3 ]] && sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=$dark/" "$f3"
+
+    pkill -SIGUSR2 -x waybar 2>/dev/null || true
+    makoctl reload 2>/dev/null || true
+}
+
+cmd="${1:-}"
+case "$cmd" in
+    color)
+        [[ ${2:-} =~ ^#?[0-9a-fA-F]{6}$ ]] || die "нужен hex вида #RRGGBB"
+        SOURCE="#${2#\#}"; KIND=color ;;
+    image)
+        [[ -n ${2:-} && -f $2 ]] || die "файл не найден: ${2:-}"
+        SOURCE="$(realpath "$2")"; KIND=image
+        set_wallpaper "$SOURCE" ;;
+    mode)
+        case "${2:-}" in dark|light|amoled) MODE="$2" ;; *) die "dark | light | amoled" ;; esac ;;
+    scheme)
+        [[ -n ${2:-} ]] || die "укажи схему, например tonal-spot"
+        SCHEME="scheme-${2#scheme-}" ;;
+    apply) ;;
+    restore)
+        if [[ $KIND == image && -f $SOURCE ]]; then set_wallpaper "$SOURCE"
+        elif [[ -f $GEN_WALL ]]; then set_wallpaper "$GEN_WALL"
+        else gen_wall; fi
+        exit 0 ;;
+    status)
+        echo "mode=$MODE scheme=$SCHEME source=$KIND:$SOURCE"; exit 0 ;;
+    *)
+        sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac
+
+mkdir -p "$CFG" "$HOME/.cache/md3"
+save
+generate
+[[ $KIND == color ]] && gen_wall
+reload
+echo "md3: готово ($MODE, $SCHEME, $KIND:$SOURCE)."
+echo "     Ghostty: Ctrl+Shift+, · GTK/Qt-приложения и Zen: перезапустить."

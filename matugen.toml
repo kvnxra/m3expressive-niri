@@ -1,0 +1,68 @@
+# Собственный конфиг matugen для команды `md3`.
+# ~/.config/matugen/config.toml (от iNiR) не используется и не меняется.
+
+# Доп. цвета для ANSI-палитры терминала. blend = true подтягивает оттенок к основному цвету схемы (harmonize в MD3).
+[config.custom_colors]
+green   = { color = "#6dd58c", blend = true }
+yellow  = { color = "#f5c84b", blend = true }
+blue    = { color = "#7aa7ff", blend = true }
+magenta = { color = "#e08cff", blend = true }
+cyan    = { color = "#4fd8e8", blend = true }
+
+[templates.waybar]
+input_path  = '~/.config/md3/templates/waybar-colors.css'
+output_path = '~/.config/waybar/colors.css'
+
+[templates.mako]
+input_path  = '~/.config/md3/templates/mako.conf'
+output_path = '~/.config/mako/config'
+
+[templates.fuzzel]
+input_path  = '~/.config/md3/templates/fuzzel.ini'
+output_path = '~/.config/fuzzel/fuzzel.ini'
+
+[templates.ghostty]
+input_path  = '~/.config/md3/templates/ghostty-theme'
+output_path = '~/.config/ghostty/themes/current'
+
+[templates.gtk3]
+input_path  = '~/.config/md3/templates/gtk.css'
+output_path = '~/.config/gtk-3.0/gtk.css'
+
+[templates.gtk4]
+input_path  = '~/.config/md3/templates/gtk.css'
+output_path = '~/.config/gtk-4.0/gtk.css'
+
+# палитра для мини-плеера (md3-player читает этот json)
+[templates.player]
+input_path  = '~/.config/md3/templates/colors.json'
+output_path = '~/.config/md3/colors.json'
+
+[templates.qt6ct]
+input_path  = '~/.config/md3/templates/qt6ct-colors.conf'
+output_path = '~/.config/qt6ct/style-colors.conf'
+
+[templates.qt5ct]
+input_path  = '~/.config/md3/templates/qt5ct-colors.conf'
+output_path = '~/.config/qt5ct/colors/md3.conf'
+
+[templates.niri]
+input_path  = '~/.config/md3/templates/niri-colors.kdl'
+output_path = '~/.config/niri/md3-colors.kdl'
+
+[templates.btop]
+input_path  = '~/.config/md3/templates/btop.theme'
+output_path = '~/.config/btop/themes/md3.theme'
+
+[templates.zathura]
+input_path  = '~/.config/md3/templates/zathura-colors'
+output_path = '~/.config/zathura/md3colors'
+
+[templates.swaylock]
+input_path  = '~/.config/md3/templates/swaylock.conf'
+output_path = '~/.config/swaylock/config'
+
+# Zen Browser: install.sh подключает этот файл в chrome/userChrome.css профиля
+[templates.zen]
+input_path  = '~/.config/md3/templates/zen-userChrome.css'
+output_path = '~/.cache/md3/zen-userChrome.css'

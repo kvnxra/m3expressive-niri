@@ -1,0 +1,6 @@
+include md3colors
+set font "Google Sans Flex 11"
+set selection-clipboard clipboard
+set recolor-keephue true
+set statusbar-h-padding 12
+set statusbar-v-padding 8

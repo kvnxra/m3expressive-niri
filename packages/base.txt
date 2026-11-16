@@ -1,0 +1,23 @@
+# Система. Драйверы GPU/микрокод ставятся отдельно — по результатам определения железа.
+base-devel
+git
+curl
+unzip
+p7zip
+rsync
+pciutils          # lspci: определение видеокарты
+linux-firmware
+networkmanager
+bluez
+bluez-utils
+pipewire
+pipewire-alsa
+pipewire-pulse
+wireplumber
+polkit
+xdg-user-dirs
+xdg-utils
+zram-generator   # сжатый swap в ОЗУ: при 16 ГБ заметно снижает подтормаживания
+pacman-contrib   # paccache.timer: автоочистка кэша пакетов
+reflector        # выбор самых быстрых зеркал
+fish

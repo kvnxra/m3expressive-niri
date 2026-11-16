@@ -1,0 +1,215 @@
+/* Material 3 Expressive · Waybar
+   Цвета приходят из colors.css (генерирует `md3`). Без blur, без теней.
+   Форма: острова-«таблетки», активный воркспейс — залитый primary и шире остальных.
+   Цвет несут контейнеры (primary / tertiary / secondary), состояния — слои 8 % поверх контейнера. */
+@import "colors.css";
+
+* {
+    font-family: "Google Sans Flex", "Google Sans", "Roboto Flex", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+window#waybar {
+    background: transparent;
+    color: @md_on_surface;
+}
+
+/* --- острова --- */
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: @md_surface_container_high;
+    border-radius: 22px;
+    padding: 0 4px;
+}
+
+.modules-center {
+    background-color: @md_primary_container;
+}
+
+/* --- общая основа интерактивных элементов --- */
+#workspaces button,
+#clock,
+#language,
+#idle_inhibitor,
+#mpris,
+#network,
+#pulseaudio,
+#custom-dnd,
+#tray {
+    background-image: none;
+    background-color: transparent;
+    color: @md_on_surface_variant;
+    margin: 4px 2px;
+    padding: 0 14px;
+    min-height: 36px;
+    border-radius: 18px;
+    transition: background-color 100ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* hover = state layer 8 % */
+#workspaces button:hover,
+#language:hover,
+#idle_inhibitor:hover,
+#mpris:hover,
+#network:hover,
+#pulseaudio:hover,
+#custom-dnd:hover {
+    background-color: alpha(@md_on_surface, 0.08);
+    color: @md_on_surface;
+}
+
+/* --- рабочие столы: активный залит primary и шире, как индикатор в navigation bar --- */
+#workspaces {
+    margin: 0;
+    padding: 0;
+}
+
+#workspaces button {
+    min-width: 36px;
+    padding: 0 4px;
+}
+
+#workspaces button.active,
+#workspaces button.focused {
+    min-width: 56px;
+    background-color: @md_primary;
+    color: @md_on_primary;
+    font-weight: 700;
+}
+
+#workspaces button.active:hover,
+#workspaces button.focused:hover {
+    background-color: mix(@md_primary, @md_on_primary, 0.08);
+    color: @md_on_primary;
+}
+
+#workspaces button:active {
+    border-radius: 10px;
+    background-color: alpha(@md_on_surface, 0.10);
+}
+
+#workspaces button.urgent {
+    background-color: @md_error_container;
+    color: @md_on_error_container;
+}
+
+/* --- часы: крупно, на primary container --- */
+#clock {
+    color: @md_on_primary_container;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 0 18px;
+}
+
+#clock:hover {
+    background-color: alpha(@md_on_primary_container, 0.08);
+}
+
+/* --- раскладка клавиатуры --- */
+#language {
+    font-weight: 700;
+    padding: 0 12px;
+}
+
+/* --- не гасить экран / не беспокоить: включённое = tonal --- */
+#idle_inhibitor.activated,
+#custom-dnd.on {
+    background-color: @md_secondary_container;
+    color: @md_on_secondary_container;
+}
+
+#idle_inhibitor.activated:hover,
+#custom-dnd.on:hover {
+    background-color: mix(@md_secondary_container, @md_on_secondary_container, 0.08);
+}
+
+/* --- плеер: assist chip на tertiary container, клик открывает md3-player --- */
+#mpris {
+    font-family: "Google Sans Flex", "Google Sans", "Material Symbols Rounded", sans-serif;
+}
+
+#mpris.playing {
+    background-color: @md_tertiary_container;
+    color: @md_on_tertiary_container;
+}
+
+#mpris.playing:hover {
+    background-color: mix(@md_tertiary_container, @md_on_tertiary_container, 0.08);
+}
+
+#mpris.stopped {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+/* --- звук --- */
+#pulseaudio.muted {
+    color: @md_outline;
+}
+
+/* --- трей --- */
+#tray {
+    padding: 0 10px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
+
+/* --- plain tooltip (inverse surface) --- */
+tooltip {
+    background-color: @md_inverse_surface;
+    border-radius: 8px;
+}
+
+tooltip label {
+    color: @md_inverse_on_surface;
+    font-size: 13px;
+    padding: 4px 8px;
+}
+
+/* --- контекстные меню трея (dbusmenu рисует GTK) --- */
+menu {
+    background-color: @md_surface_container_high;
+    color: @md_on_surface;
+    border: 1px solid @md_outline_variant;
+    border-radius: 16px;
+    padding: 8px 0;
+}
+
+menu menuitem {
+    background-image: none;
+    background-color: transparent;
+    color: @md_on_surface;
+    margin: 0 8px;
+    padding: 8px 16px;
+    min-height: 24px;
+    border-radius: 12px;
+}
+
+menu menuitem:hover {
+    background-color: alpha(@md_on_surface, 0.08);
+}
+
+menu menuitem:disabled,
+menu menuitem:disabled label {
+    color: @md_outline;
+}
+
+menu separator {
+    background-color: @md_outline_variant;
+    min-height: 1px;
+    margin: 6px 16px;
+}

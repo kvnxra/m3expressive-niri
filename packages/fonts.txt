@@ -1,0 +1,5 @@
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-jetbrains-mono-nerd   # моноширинный для терминала
+ttf-google-sans           # AUR; Google Sans Flex и Material Symbols скачиваются отдельно

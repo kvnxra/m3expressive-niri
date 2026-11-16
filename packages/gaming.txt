@@ -1,0 +1,6 @@
+# Игры (ставится только с --gaming или по запросу). Нужен включённый multilib.
+steam
+gamemode
+lib32-gamemode
+mangohud
+lib32-mangohud

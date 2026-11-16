@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# md3-zen — подключить MD3-оформление к профилю Zen Browser (запусти после первого запуска Zen)
+set -euo pipefail
+CACHE_CSS="$HOME/.cache/md3/zen-userChrome.css"
+
+ZEN="${1:-$(python3 - <<'PY' || true
+import configparser, os, sys
+home = os.path.expanduser("~")
+roots = [home + "/.config/zen", home + "/.zen",
+         home + "/.var/app/app.zen_browser.zen/.zen", home + "/.var/app/app.zen_browser.zen/config/zen"]
+for root in roots:
+    ini = os.path.join(root, "profiles.ini")
+    if not os.path.isfile(ini):
+        continue
+    cp = configparser.RawConfigParser()
+    cp.read(ini)
+    cands = []
+    for s in cp.sections():
+        if s.startswith("Install") and cp.has_option(s, "Default"):
+            cands.append((cp.get(s, "Default"), True))
+    for s in cp.sections():
+        if s.startswith("Profile") and cp.has_option(s, "Path") and cp.get(s, "Default", fallback="0") == "1":
+            cands.append((cp.get(s, "Path"), cp.get(s, "IsRelative", fallback="1") == "1"))
+    for p, rel in cands:
+        path = os.path.join(root, p) if rel else p
+        if os.path.isdir(path):
+            print(path); sys.exit(0)
+for root in roots:
+    if os.path.isdir(root):
+        for d in sorted(os.listdir(root)):
+            if os.path.isfile(os.path.join(root, d, "prefs.js")):
+                print(os.path.join(root, d)); sys.exit(0)
+PY
+)}"
+
+if [[ -z $ZEN || ! -d $ZEN ]]; then
+    echo "md3-zen: профиль Zen не найден. Запусти Zen хотя бы раз и повтори:  md3-zen" >&2
+    exit 1
+fi
+
+mkdir -p "$ZEN/chrome"
+UC="$ZEN/chrome/userChrome.css"
+if [[ -e $UC || -L $UC ]]; then
+    BK="$HOME/.config/md3/backup-zen-$(date +%F_%H-%M-%S)"; mkdir -p "$BK"; cp -a "$UC" "$BK/userChrome.css"
+fi
+[[ -L $UC ]] && rm "$UC"
+IMPORT="@import \"$CACHE_CSS\";"
+if ! grep -qF "$IMPORT" "$UC" 2>/dev/null; then
+    { echo "$IMPORT"; [[ -f $UC ]] && cat "$UC"; } > "$UC.new" && mv "$UC.new" "$UC"
+fi
+for pref in 'toolkit.legacyUserProfileCustomizations.stylesheets' 'devtools.chrome.enabled'; do
+    grep -qF "\"$pref\"" "$ZEN/user.js" 2>/dev/null || echo "user_pref(\"$pref\", true);" >> "$ZEN/user.js"
+done
+echo "md3-zen: профиль $ZEN подключён. Перезапусти Zen (Settings → General → Website Appearance → Auto)."

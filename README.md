@@ -28,6 +28,9 @@
 Перекрашиваются: niri (обводка активного окна), Waybar, mako, fuzzel, ghostty, GTK3/4, Qt5/6, swaylock, btop, zathura, Zen, мини-плеер.
 
 ## Клавиши (полный список: Mod+Shift+/)
+Если у тебя уже была настройка niri с `cfg/keybinds.kdl`, установщик оставит **твои** бинды (файл `~/.config/niri/binds.kdl` просто подключает их).
+Стандартные: `./install.sh --default-binds`. Ниже — стандартные бинды md3-niri.
+
 `Mod+Return` терминал · `Mod+D` запуск · `Mod+E` файлы · `Mod+B` браузер · `Mod+P` плеер · `Mod+Shift+V` буфер обмена ·
 `Mod+Shift+T` цвета и обои · `Mod+Shift+E` сеанс · `Mod+Alt+L` блокировка · `Mod+O` обзор · `Mod+Q` закрыть ·
 `Mod+Space` раскладка (us/ru; также Alt+Shift) · `Print` скриншот

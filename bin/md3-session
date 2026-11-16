@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# md3-session — меню сеанса (fuzzel): блокировка, выход, сон, перезагрузка, выключение
+ICON="$(printf '\xee\xa2\xac')"   # Material Symbols: power_settings_new
+
+menu() { fuzzel --dmenu --prompt "$ICON  " --placeholder "$1" --lines "$2" 2>/dev/null; }
+
+confirm() {   # confirm "Что делаем?"
+    local a
+    a=$(printf '%s\n' "Да, $1" "Отмена" | menu "Точно?" 2) || return 1
+    [[ $a == Да* ]]
+}
+
+choice=$(printf '%s\n' "Заблокировать" "Выйти" "Сон" "Перезагрузить" "Выключить" | menu "Сеанс" 5) || exit 0
+case $choice in
+    Заблокировать) exec swaylock ;;
+    Выйти)         confirm "выйти" && niri msg action quit --skip-confirmation ;;
+    Сон)           systemctl suspend ;;
+    Перезагрузить) confirm "перезагрузить" && systemctl reboot ;;
+    Выключить)     confirm "выключить" && systemctl poweroff ;;
+esac

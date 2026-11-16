@@ -1,0 +1,12 @@
+# Лёгкие приложения, которые подхватывают цвета системы
+nautilus            # файловый менеджер на libadwaita: красится через gtk.css
+file-roller         # архивы
+loupe               # просмотр изображений (GTK4)
+gnome-text-editor   # редактор (GTK4)
+gnome-calculator
+zathura             # PDF: красится шаблоном matugen
+zathura-pdf-mupdf
+mpv                 # видео, аппаратное декодирование VA-API
+btop                # монитор системы: тема md3
+fastfetch
+zen-browser-bin     # AUR; красится через userChrome (команда md3-zen)

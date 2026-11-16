@@ -1,0 +1,154 @@
+// ─── niri · Material 3 Expressive ─────────────────────────────────────────────
+// Рассчитан на Ryzen 3 3200G / Vega 8: без blur и теней, короткие анимации.
+// Цвета (обводка активного окна, фон обзора) лежат в md3-colors.kdl — его генерирует `md3`.
+
+input {
+    keyboard {
+        xkb {
+            layout "us,ru"
+            options "grp:alt_shift_toggle"
+        }
+        numlock
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
+    mouse {
+    }
+}
+
+// Монитор: максимальная поддерживаемая герцовка (72 Гц)
+output "HDMI-A-1" {
+    mode "1920x1080@71.910"
+    scale 1
+}
+
+layout {
+    gaps 8
+    center-focused-column "never"
+    background-color "transparent"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+    default-column-width { proportion 0.5; }
+    border {
+        off
+    }
+    shadow {
+        off
+    }
+    struts {
+    }
+}
+
+prefer-no-csd
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+cursor {
+    xcursor-theme "Bibata-Modern-Classic"
+    xcursor-size 24
+}
+
+overview {
+    workspace-shadow {
+        off
+    }
+}
+
+environment {
+    XCURSOR_THEME "Bibata-Modern-Classic"
+    XCURSOR_SIZE "24"
+    QT_QPA_PLATFORMTHEME "qt6ct"
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+}
+
+// ─── автозапуск ───────────────────────────────────────────────────────────────
+spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+spawn-at-startup "awww-daemon"
+spawn-at-startup "waybar"
+spawn-at-startup "mako"
+spawn-at-startup "nm-applet" "--indicator"
+spawn-at-startup "blueman-applet"
+spawn-at-startup "sh" "-c" "wl-paste --type text --watch cliphist store"
+spawn-at-startup "sh" "-c" "wl-paste --type image --watch cliphist store"
+spawn-at-startup "swayidle" "-w" "timeout" "600" "swaylock -f" "timeout" "900" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors" "before-sleep" "swaylock -f"
+// Мини-плеер: прогреть в фоне, дальше открывается мгновенно
+spawn-at-startup "@HOME@/.local/bin/md3-player" "--daemon"
+// Вернуть обои (awww) после входа
+spawn-at-startup "@HOME@/.local/bin/md3" "restore"
+
+// ─── движение: сверхбыстрые и лёгкие анимации без нагрузки на Vega 8 ──────────
+animations {
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1400 epsilon=0.001
+    }
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=1400 epsilon=0.001
+    }
+    window-movement {
+        spring damping-ratio=1.0 stiffness=1400 epsilon=0.001
+    }
+    window-resize {
+        off
+    }
+    overview-open-close {
+        spring damping-ratio=1.0 stiffness=1400 epsilon=0.001
+    }
+    window-open {
+        duration-ms 100
+        curve "cubic-bezier" 0.05 0.7 0.1 1.0
+    }
+    window-close {
+        duration-ms 80
+        curve "cubic-bezier" 0.3 0.0 0.8 0.15
+    }
+}
+
+// ─── правила окон ─────────────────────────────────────────────────────────────
+// форма: скругления 12px (без избыточной нагрузки на fillrate iGPU Vega 8)
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id=r#"^pavucontrol$"#
+    match app-id=r#"^nm-connection-editor$"#
+    match app-id=r#"^blueman-manager$"#
+    match app-id=r#"^org\.gnome\.Calculator$"#
+    match app-id=r#"^org\.gnome\.FileRoller$"#
+    open-floating true
+}
+
+window-rule {
+    match title=r#"^Picture-in-Picture$"#
+    match app-id="zoom"
+    open-floating true
+}
+
+window-rule {
+    match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#
+    default-floating-position x=10 y=10 relative-to="bottom-right"
+    open-focused false
+}
+
+// ─── клавиши: см. binds.kdl ───────────────────────────────────────────────────
+include "binds.kdl"
+
+// Цвета обводки активного окна и фона обзора (генерируется, не редактируй)
+include "md3-colors.kdl"

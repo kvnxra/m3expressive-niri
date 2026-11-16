@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# md3-clip — история буфера обмена (cliphist + fuzzel)
+ICON="$(printf '\xee\x85\x8f')"   # Material Symbols: content_paste
+sel=$(cliphist list | fuzzel --dmenu --prompt "$ICON  " --placeholder "Буфер обмена" --lines 10 2>/dev/null) || exit 0
+[[ -n $sel ]] && cliphist decode <<<"$sel" | wl-copy

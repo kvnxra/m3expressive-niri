@@ -1,0 +1,37 @@
+# Окружение niri
+niri
+xwayland-satellite      # X11-приложения (Steam, старый софт); niri сам запускает при необходимости
+xdg-desktop-portal
+xdg-desktop-portal-gnome  # скринкаст / выбор файлов
+xdg-desktop-portal-gtk
+polkit-gnome
+waybar
+mako
+fuzzel
+swaylock
+swayidle
+awww                    # обои (бывший swww); репозиторий или AUR — определится автоматически
+matugen                 # генератор палитры Material You
+ghostty
+playerctl
+wl-clipboard
+cliphist
+grim
+slurp
+libnotify
+network-manager-applet
+blueman
+pavucontrol
+gvfs
+gvfs-mtp
+# мини-плеер md3-player
+gtk4
+gtk4-layer-shell
+python-gobject
+python-cairo
+# оформление
+adw-gtk-theme
+qt5ct
+qt6ct
+papirus-icon-theme
+bibata-cursor-theme-bin  # AUR

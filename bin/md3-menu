@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# md3-menu — цвет / обои / режим / схема через fuzzel. Заменяет старый переключатель тем omarchy.
+set -u
+MD3="${MD3_BIN:-$HOME/.local/bin/md3}"
+WALLS="${MD3_WALLPAPERS:-$HOME/Pictures/Wallpapers}"
+ICON="$(printf '\xee\x90\x8a')"   # Material Symbols: palette
+
+note() { notify-send "MD3" "$1" 2>/dev/null || echo "md3-menu: $1" >&2; }
+
+# menu "<заголовок>" — строки из stdin
+menu() {
+    local lines
+    lines=$(grep -c '' | tr -d ' ')
+    fuzzel --dmenu --prompt "$ICON  " --placeholder "$1" --lines "$(( lines > 12 ? 12 : lines ))" 2>/dev/null
+}
+
+choose_color() {
+    local presets=(
+        "Фиолетовый  #6750A4" "Индиго  #4355B9" "Синий  #1A73E8" "Бирюзовый  #00796B"
+        "Зелёный  #2E7D32" "Лаймовый  #6B7F00" "Жёлтый  #B58900" "Оранжевый  #C25E00"
+        "Красный  #C62828" "Розовый  #B4236C" "Коричневый  #795548" "Серый  #5F6F7A"
+    )
+    local sel hex
+    sel=$(printf '%s\n' "${presets[@]}" | menu "Цвет") || return 0
+    hex=$(grep -o '#[0-9A-Fa-f]\{6\}' <<<"$sel" | head -n1)
+    [[ -n $hex ]] && "$MD3" color "$hex"
+}
+
+choose_wall() {
+    [[ -d $WALLS ]] || { note "Нет папки с обоями: $WALLS"; return 0; }
+    local files=() sel
+    mapfile -t files < <(find -L "$WALLS" -maxdepth 2 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort)
+    (( ${#files[@]} )) || { note "В $WALLS нет картинок"; return 0; }
+    sel=$(printf '%s\n' "${files[@]#"$WALLS"/}" | menu "Обои") || return 0
+    [[ -n $sel && -f $WALLS/$sel ]] && "$MD3" image "$WALLS/$sel"
+}
+
+choose_mode() {
+    local sel
+    sel=$(printf '%s\n' "Тёмная" "Светлая" "AMOLED (чёрная)" | menu "Режим") || return 0
+    case $sel in
+        Тёмная*) "$MD3" mode dark ;;
+        Светлая*) "$MD3" mode light ;;
+        AMOLED*) "$MD3" mode amoled ;;
+    esac
+}
+
+choose_scheme() {
+    local sel
+    sel=$(printf '%s\n' \
+        "tonal-spot — спокойная, по умолчанию" "content — близко к цвету картинки" \
+        "expressive — яркая, необычная" "fidelity — максимально точно" \
+        "fruit-salad — разноцветная" "rainbow — радужная" \
+        "neutral — почти серая" "monochrome — чёрно-белая" | menu "Схема") || return 0
+    "$MD3" scheme "${sel%% *}"
+}
+
+main=$(printf '%s\n' "Цвет" "Обои" "Режим" "Схема" | menu "Оформление") || exit 0
+case $main in
+    Цвет)  choose_color ;;
+    Обои)  choose_wall ;;
+    Режим) choose_mode ;;
+    Схема) choose_scheme ;;
+esac

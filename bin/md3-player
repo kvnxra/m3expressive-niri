@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# md3-player — мини-плеер. Работает как тихий фоновый процесс: клик по чипу в waybar лишь переключает окно.
+#   md3-player            показать/скрыть (если процесса нет — запустить и показать)
+#   md3-player --daemon   запустить скрытым (niri делает это при входе)
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/md3-player.pid"
+
+if [[ -r $PIDFILE ]]; then
+    pid="$(<"$PIDFILE")"
+    if [[ $pid =~ ^[0-9]+$ ]] && tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null | grep -q 'md3-player'; then
+        [[ ${1:-} == --daemon ]] && exit 0
+        kill -USR1 "$pid"
+        exit 0
+    fi
+fi
+
+# gtk4-layer-shell должен загрузиться раньше libwayland-client — отсюда LD_PRELOAD
+LIB=/usr/lib/libgtk4-layer-shell.so
+[[ -f $LIB ]] || LIB="$(ldconfig -p 2>/dev/null | awk '/libgtk4-layer-shell\.so /{print $NF; exit}')"
+[[ -n ${LIB:-} ]] && export LD_PRELOAD="$LIB${LD_PRELOAD:+:$LD_PRELOAD}"
+
+args=("$@")
+[[ ${1:-} == --daemon ]] || args+=(--show)
+setsid -f python3 "$(dirname "$(readlink -f "$0")")/md3-player.py" "${args[@]}" >/dev/null 2>&1 </dev/null
