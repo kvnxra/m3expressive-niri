@@ -82,7 +82,6 @@ spawn-at-startup "awww-daemon"
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
 spawn-at-startup "nm-applet" "--indicator"
-spawn-at-startup "blueman-applet"
 spawn-at-startup "sh" "-c" "wl-paste --type text --watch cliphist store"
 spawn-at-startup "sh" "-c" "wl-paste --type image --watch cliphist store"
 spawn-at-startup "swayidle" "-w" "timeout" "600" "swaylock -f" "timeout" "900" "niri msg action power-off-monitors" "resume" "niri msg action power-on-monitors" "before-sleep" "swaylock -f"
@@ -129,7 +128,6 @@ window-rule {
 window-rule {
     match app-id=r#"^pavucontrol$"#
     match app-id=r#"^nm-connection-editor$"#
-    match app-id=r#"^blueman-manager$"#
     match app-id=r#"^org\.gnome\.Calculator$"#
     match app-id=r#"^org\.gnome\.FileRoller$"#
     open-floating true

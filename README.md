@@ -14,7 +14,7 @@
 | Окружение | niri, xwayland-satellite, waybar, mako, fuzzel, swaylock, swayidle, awww, matugen, ghostty, порталы |
 | Приложения | nautilus, file-roller, loupe, gnome-text-editor, gnome-calculator, zathura, mpv, btop, fastfetch, Zen Browser |
 | Шрифты | Google Sans, Google Sans Flex, Material Symbols, JetBrainsMono Nerd, Noto |
-| Система | zram, fstrim, NetworkManager, Bluetooth, PipeWire, (по желанию) greetd, Steam + gamemode |
+| Система | zram, fstrim, NetworkManager, PipeWire, (по желанию) greetd, Steam + gamemode |
 
 Списки лежат в `packages/*.txt` — убирай и добавляй строки. Каждый пакет автоматически ищется в репозиториях, затем в AUR.
 

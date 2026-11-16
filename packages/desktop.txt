@@ -20,7 +20,6 @@ grim
 slurp
 libnotify
 network-manager-applet
-blueman
 pavucontrol
 gvfs
 gvfs-mtp

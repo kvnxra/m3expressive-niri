@@ -8,8 +8,6 @@ rsync
 pciutils          # lspci: определение видеокарты
 linux-firmware
 networkmanager
-bluez
-bluez-utils
 pipewire
 pipewire-alsa
 pipewire-pulse

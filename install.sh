@@ -201,8 +201,8 @@ fi
 if (( ! DOTONLY )); then
     step "Система: сервисы, zram, драйверы"
 
-    sudo systemctl enable --now NetworkManager.service bluetooth.service fstrim.timer paccache.timer 2>/dev/null \
-        || warn "не удалось включить часть сервисов (NetworkManager / bluetooth / fstrim / paccache)"
+    sudo systemctl enable --now NetworkManager.service fstrim.timer paccache.timer 2>/dev/null \
+        || warn "не удалось включить часть сервисов (NetworkManager / fstrim / paccache)"
     sudo systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service 2>/dev/null || true
 
     if (( IS_CACHY )) || pacman -Q cachyos-settings >/dev/null 2>&1; then
